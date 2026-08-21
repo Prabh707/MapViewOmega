@@ -1,0 +1,574 @@
+import { AccessibilityProfile, TransitStop, TransitLine, QuickPreset, CommunityReport, FleetVehicle } from '../types/transit';
+
+export const ACCESSIBILITY_PROFILES: Record<string, AccessibilityProfile> = {
+  wheelchair: {
+    id: 'wheelchair',
+    name: 'Wheelchair / Stroller',
+    icon: '🦼',
+    tagline: '100% Step-Free & Ramps',
+    description: 'Guarantees 100% step-free pathways, operational elevators, low-floor vehicle ramps, and curb cutouts with minimal walking distances.',
+    defaultPreferences: {
+      profileId: 'wheelchair',
+      stepFreeOnly: true,
+      avoidStairs: true,
+      maxWalkDistanceMeters: 300,
+      preferSaferRoute: false,
+      avoidCrowded: false,
+      requireElevators: true,
+      voiceAnnouncements: false,
+      highContrast: false,
+      fontSize: 'normal'
+    }
+  },
+  elderly: {
+    id: 'elderly',
+    name: 'Reduced Mobility',
+    icon: '🦯',
+    tagline: 'Short Walks & Zero Stairs',
+    description: 'Prioritizes shortest walking segments (< 250m), level pathways with benches, zero steep stairs, and direct routes with guaranteed seating.',
+    defaultPreferences: {
+      profileId: 'elderly',
+      stepFreeOnly: true,
+      avoidStairs: true,
+      maxWalkDistanceMeters: 250,
+      preferSaferRoute: true,
+      avoidCrowded: false,
+      requireElevators: true,
+      voiceAnnouncements: false,
+      highContrast: false,
+      fontSize: 'normal'
+    }
+  },
+  night_safety: {
+    id: 'night_safety',
+    name: 'Late-Night & Solo Safety',
+    icon: '🌙',
+    tagline: 'Bright Corridors & CCTV',
+    description: 'Prioritizes maximum lighting (≥ 9.0/10), continuous CCTV coverage, emergency Blue-Light SOS kiosks, and staffed security hubs.',
+    defaultPreferences: {
+      profileId: 'night_safety',
+      stepFreeOnly: false,
+      avoidStairs: false,
+      maxWalkDistanceMeters: 600,
+      preferSaferRoute: true,
+      avoidCrowded: false,
+      requireElevators: false,
+      voiceAnnouncements: true,
+      highContrast: false,
+      fontSize: 'normal'
+    }
+  },
+  quiet_sensory: {
+    id: 'quiet_sensory',
+    name: 'Low Sensory / Quiet',
+    icon: '🎧',
+    tagline: 'Uncrowded & Calm Transit',
+    description: 'Avoids packed train cars, crowded transfer mezzanine rush, and noisy construction corridors. Prefers calm shuttles with open seating.',
+    defaultPreferences: {
+      profileId: 'quiet_sensory',
+      stepFreeOnly: false,
+      avoidStairs: false,
+      maxWalkDistanceMeters: 500,
+      preferSaferRoute: false,
+      avoidCrowded: true,
+      requireElevators: false,
+      voiceAnnouncements: false,
+      highContrast: false,
+      fontSize: 'normal'
+    }
+  },
+  vision_hearing: {
+    id: 'vision_hearing',
+    name: 'Visual & Hearing Assist',
+    icon: '👁️',
+    tagline: 'Tactile Paving & Voice Cues',
+    description: 'Requires tactile platform edge paving, synthesized audio arrival announcements, high-contrast digital displays, and clear wayfinding.',
+    defaultPreferences: {
+      profileId: 'vision_hearing',
+      stepFreeOnly: false,
+      avoidStairs: true,
+      maxWalkDistanceMeters: 500,
+      preferSaferRoute: true,
+      avoidCrowded: false,
+      requireElevators: false,
+      voiceAnnouncements: true,
+      highContrast: true,
+      fontSize: 'large'
+    }
+  },
+  standard: {
+    id: 'standard',
+    name: 'Standard Route',
+    icon: '⚡',
+    tagline: 'Fastest & Balanced',
+    description: 'Standard travel mode balancing overall travel time, transfers, and direct connection speed without accessibility filters.',
+    defaultPreferences: {
+      profileId: 'standard',
+      stepFreeOnly: false,
+      avoidStairs: false,
+      maxWalkDistanceMeters: 1000,
+      preferSaferRoute: false,
+      avoidCrowded: false,
+      requireElevators: false,
+      voiceAnnouncements: false,
+      highContrast: false,
+      fontSize: 'normal'
+    }
+  }
+};
+
+export const MOCK_TRANSIT_STOPS: Record<string, TransitStop> = {
+  stop_gate: {
+    id: 'stop_gate',
+    name: 'Campus Main Gate & Transit Plaza',
+    code: 'CMG-00',
+    lat: 42.3565,
+    lng: -71.1010,
+    type: 'campus_hub',
+    zone: 'South Main Entrance',
+    lightingScore: 9.7,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: true,
+    hasRamp: true,
+    elevatorStatus: 'operational',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'Illuminated Glass Canopy with Level Boarding Bay',
+    crowdLevel: 'low',
+    description: 'Main campus welcome plaza. 100% step-free direct boarding zone, staffed 24/7 security kiosk, tactile paths, and automated electric shuttle staging.',
+    features: ['100% Step-Free Ramps', '24/7 Welcome Security Kiosk', 'Shuttle 1A Terminus', 'Tactile Edge Warning']
+  },
+  stop_lib: {
+    id: 'stop_lib',
+    name: 'University Central Library Hub',
+    code: 'UCL-01',
+    lat: 42.3601,
+    lng: -71.0942,
+    type: 'campus_hub',
+    zone: 'West Campus Safe Corridor',
+    lightingScore: 9.8,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: true,
+    hasRamp: true,
+    elevatorStatus: 'operational',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'Heated Glass Enclosed Hub with Benches',
+    crowdLevel: 'low',
+    description: 'Main campus safe corridor hub. Bright high-intensity LED canopy, staffed security kiosk, and dedicated low-floor boarding bay.',
+    features: ['High-intensity LED lights', 'Emergency SOS button', 'Wheelchair boarding zone', 'Visual & Audio Real-Time Display']
+  },
+
+  stop_metro: {
+    id: 'stop_metro',
+    name: 'Metro Central Station',
+    code: 'MCS-12',
+    lat: 42.3655,
+    lng: -71.1037,
+    type: 'metro_station',
+    zone: 'Downtown Transit Center',
+    lightingScore: 8.8,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: false, // Street entrance has stairs; elevator on north side broken for maintenance
+    hasRamp: false,
+    elevatorStatus: 'broken',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'Major Underground Transit Concourse',
+    crowdLevel: 'high',
+    description: 'High-volume underground station. North entrance elevator undergoing hydraulic repair; mezzanine access has 18 stairs. Heavy rush hour crowds.',
+    features: ['24/7 Transit Police Staffing', '18 Staircase at Main Gate', 'Elevator Broken (North Side)', 'High Rush Hour Crowds']
+  },
+  stop_hosp: {
+    id: 'stop_hosp',
+    name: 'City General Hospital & Health Hub',
+    code: 'CGH-04',
+    lat: 42.3628,
+    lng: -71.0765,
+    type: 'medical_hub',
+    zone: 'Medical District Safe Zone',
+    lightingScore: 9.9,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: true,
+    hasRamp: true,
+    elevatorStatus: 'operational',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'Covered Weatherproof Canopy with Seating',
+    crowdLevel: 'low',
+    description: 'Fully accessible medical pavilion with zero-step level boarding, wheelchair loan kiosk, and continuous safety escort presence.',
+    features: ['Level Curb Boarding', 'Wheelchair Loan Kiosk', '100% Step-Free Ramps', '24/7 Security Escort Desk']
+  },
+  stop_tech: {
+    id: 'stop_tech',
+    name: 'Innovation Tech Park Hub',
+    code: 'ITP-09',
+    lat: 42.3702,
+    lng: -71.0850,
+    type: 'tech_campus',
+    zone: 'North Innovation Quad',
+    lightingScore: 9.2,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: true,
+    hasRamp: true,
+    elevatorStatus: 'operational',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'Smart Solar Glass Hub',
+    crowdLevel: 'moderate',
+    description: 'Modern step-free hub with power wheelchair charging stations, voice-activated schedules, and well-lit pedestrian pathways.',
+    features: ['Power Chair Charging Port', 'Tactile Edge Warning', 'Voice Route Announcer', 'Wide Automatic Doors']
+  },
+  stop_res: {
+    id: 'stop_res',
+    name: 'University Residences North',
+    code: 'URN-05',
+    lat: 42.3685,
+    lng: -71.0990,
+    type: 'residence_hall',
+    zone: 'North Campus Residential',
+    lightingScore: 9.4,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: true,
+    hasRamp: true,
+    elevatorStatus: 'operational',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'Residential Transit Shelter',
+    crowdLevel: 'low',
+    description: 'Direct campus shuttle terminus right in front of dorm entrance. Wide curb cutouts, safety call station, and quiet environment.',
+    features: ['Direct Dorm Ramp Access', 'Blue Light SOS Station', 'Quiet Waiting Zone', 'Covered Rain Canopy']
+  },
+  stop_arts: {
+    id: 'stop_arts',
+    name: 'Arts & Cultural District Alley',
+    code: 'ACD-08',
+    lat: 42.3580,
+    lng: -71.0820,
+    type: 'arts_district',
+    zone: 'East Arts Corridor',
+    lightingScore: 6.8, // Dim lighting in cobblestone alley
+    cctvCovered: false,
+    securityKioskNearby: false,
+    blueLightSOS: false,
+    stepFree: false, // Cobblestone and 3 curb steps
+    hasRamp: false,
+    elevatorStatus: 'none',
+    tactilePaving: false,
+    audioAnnouncements: false,
+    shelterType: 'Uncovered Curbside Post',
+    crowdLevel: 'moderate',
+    description: 'Historical district with uneven cobblestones, poor lighting at night, and lack of curb ramps. Not recommended for wheelchairs or late-night solo travel.',
+    features: ['Cobblestone Walkway (Vibration Hazard)', 'No Curb Ramps', 'Dim Lighting (6.8/10)', 'No Emergency Call Station']
+  },
+  stop_sports: {
+    id: 'stop_sports',
+    name: 'Athletic Arena & Recreation Center',
+    code: 'ARC-03',
+    lat: 42.3550,
+    lng: -71.0995,
+    type: 'sports_complex',
+    zone: 'South Campus Athletics',
+    lightingScore: 9.0,
+    cctvCovered: true,
+    securityKioskNearby: true,
+    blueLightSOS: true,
+    stepFree: true,
+    hasRamp: true,
+    elevatorStatus: 'operational',
+    tactilePaving: true,
+    audioAnnouncements: true,
+    shelterType: 'High-Capacity Stadium Canopy',
+    crowdLevel: 'moderate',
+    description: 'Broad accessible ramps, level boarding platforms, and multiple accessible seating bays.',
+    features: ['Extra-Wide Ramp Incline (1:16)', 'Elevator to Lower Field', 'LED Illuminated Walkway', 'Security Guard Station']
+  }
+};
+
+export const MOCK_TRANSIT_LINES: Record<string, TransitLine> = {
+  line_shuttle: {
+    id: 'line_shuttle',
+    name: 'SafeCorridor Campus Night Shuttle',
+    shortName: 'Shuttle 1A',
+    type: 'campus_shuttle',
+    color: '#10b981', // Emerald
+    textColor: '#ffffff',
+    icon: '🚐',
+    frequencyMin: 6,
+    stopsSequence: ['stop_gate', 'stop_lib', 'stop_res', 'stop_tech', 'stop_hosp'],
+    crowdLevel: 'low',
+    features: {
+      lowFloorRamp: true,
+      wheelchairBays: 3,
+      audioAnnouncements: true,
+      visualDisplay: true,
+      onboardSafetyGuard: true,
+      securityCameras: 4
+    }
+  },
+  line_metro: {
+    id: 'line_metro',
+    name: 'Metro Blue Line (Downtown Sub)',
+    shortName: 'Metro Blue',
+    type: 'subway',
+    color: '#3b82f6', // Blue
+    textColor: '#ffffff',
+    icon: '🚇',
+    frequencyMin: 4,
+    stopsSequence: ['stop_gate', 'stop_sports', 'stop_lib', 'stop_metro', 'stop_tech'],
+    crowdLevel: 'high',
+    features: {
+      lowFloorRamp: false, // Gap between train and platform requires bridge plate
+      wheelchairBays: 2,
+      audioAnnouncements: true,
+      visualDisplay: true,
+      onboardSafetyGuard: false,
+      securityCameras: 6
+    }
+  },
+  line_bus4: {
+    id: 'line_bus4',
+    name: 'City Rapid Transit Line 4',
+    shortName: 'Bus 4',
+    type: 'bus',
+    color: '#f59e0b', // Amber
+    textColor: '#000000',
+    icon: '🚌',
+    frequencyMin: 8,
+    stopsSequence: ['stop_gate', 'stop_lib', 'stop_arts', 'stop_hosp'],
+    crowdLevel: 'moderate',
+    features: {
+      lowFloorRamp: true,
+      wheelchairBays: 2,
+      audioAnnouncements: true,
+      visualDisplay: true,
+      onboardSafetyGuard: false,
+      securityCameras: 3
+    }
+  },
+  line_green_rail: {
+    id: 'line_green_rail',
+    name: 'University Light Rail Green',
+    shortName: 'Green Rail',
+    type: 'light_rail',
+    color: '#8b5cf6', // Violet
+    textColor: '#ffffff',
+    icon: '🚊',
+    frequencyMin: 7,
+    stopsSequence: ['stop_gate', 'stop_sports', 'stop_lib', 'stop_res', 'stop_tech'],
+    crowdLevel: 'low',
+    features: {
+      lowFloorRamp: true,
+      wheelchairBays: 4,
+      audioAnnouncements: true,
+      visualDisplay: true,
+      onboardSafetyGuard: true,
+      securityCameras: 4
+    }
+  }
+};
+
+export const QUICK_PRESETS: QuickPreset[] = [
+  {
+    id: 'preset_gate_to_lib',
+    title: 'Main Gate ➔ Central Library',
+    icon: '🏛️📚',
+    originId: 'stop_gate',
+    destId: 'stop_lib',
+    description: 'Hackathon Primary Demo: 100% step-free SafeCorridor Shuttle vs subway stairs tradeoff.'
+  },
+  {
+    id: 'preset_lib_to_metro',
+    title: 'Library ➔ Metro Station',
+    icon: '📚🚇',
+    originId: 'stop_lib',
+    destId: 'stop_metro',
+    description: 'Demonstrates wheelchair & elevator avoidance vs fastest subway tradeoff.'
+  },
+  {
+    id: 'preset_lib_to_hosp',
+    title: 'Library ➔ Hospital Health Hub',
+    icon: '🏥🦼',
+    originId: 'stop_lib',
+    destId: 'stop_hosp',
+    description: '100% step-free safe corridor shuttle vs curbside bus with cobblestone hazard.'
+  },
+  {
+    id: 'preset_tech_to_res',
+    title: 'Tech Park ➔ Residences North',
+    icon: '💻🏡',
+    originId: 'stop_tech',
+    destId: 'stop_res',
+    description: 'Late-night lighted shuttle route with CCTV and zero stairs.'
+  },
+  {
+    id: 'preset_arts_to_res',
+    title: 'Arts District ➔ Residences',
+    icon: '🎨🏠',
+    originId: 'stop_arts',
+    destId: 'stop_res',
+    description: 'Shows barrier warnings on cobblestones and recommends safer lit paths.'
+  }
+];
+
+
+export const INITIAL_COMMUNITY_REPORTS: CommunityReport[] = [
+  {
+    id: 'rep_101',
+    stopId: 'stop_metro',
+    stopName: 'Metro Central Station',
+    lineId: 'line_metro',
+    lineName: 'Metro Blue Line (Downtown Sub)',
+    type: 'broken_elevator',
+    category: 'Accessibility Barrier',
+    title: 'Broken Elevator at North Concourse',
+    details: 'North mezzanine elevator is completely out of order with maintenance cones. Requires 18 stairs to reach boarding platform.',
+    impact: 'Elevator status set to Inaccessible. Avoided in wheelchair routing.',
+    timestamp: '12 mins ago',
+    upvotes: 14,
+    status: 'active',
+    severity: 'critical'
+  },
+  {
+    id: 'rep_102',
+    stopId: 'stop_arts',
+    stopName: 'Arts & Cultural District Alley',
+    type: 'dim_lighting',
+    category: 'Safety Issue',
+    title: 'Cobblestone Pathway Dim Lighting Hazard',
+    details: 'Curb cut is blocked by delivery crates and 2 streetlamps are flickering. Recommend using west detour corridor.',
+    impact: 'Safety score reduced by 20% for nighttime walking.',
+    timestamp: '28 mins ago',
+    upvotes: 8,
+    status: 'active',
+    severity: 'medium'
+  },
+  {
+    id: 'rep_103',
+    lineId: 'line_metro',
+    lineName: 'Metro Blue Line (Downtown Sub)',
+    stopId: 'stop_metro',
+    stopName: 'Metro Central Station',
+    type: 'crowded',
+    category: 'Crowding',
+    title: 'Heavy Car Crowding & Zero Wheelchair Clearance',
+    details: 'Subway cars at 95% occupancy during class change rush. Accessible bays blocked by standing passengers.',
+    impact: 'Crowd level flagged as High.',
+    timestamp: '35 mins ago',
+    upvotes: 19,
+    status: 'active',
+    severity: 'high',
+    crowdLevelReported: 'high'
+  },
+  {
+    id: 'rep_104',
+    lineId: 'line_bus4',
+    lineName: 'City Rapid Transit Line 4',
+    stopId: 'stop_lib',
+    stopName: 'University Central Library Hub',
+    type: 'delay',
+    category: 'Transit Delay',
+    title: 'City Bus 4 Running +8 Min Behind Schedule',
+    details: 'Traffic backup along Commonwealth Ave. Recommend taking SafeCorridor Campus Night Shuttle instead.',
+    impact: 'Wait time adjusted +8 mins.',
+    timestamp: '42 mins ago',
+    upvotes: 6,
+    status: 'active',
+    severity: 'medium',
+    delayMinutesReported: 8
+  },
+  {
+    id: 'rep_105',
+    stopId: 'stop_hosp',
+    stopName: 'City General Hospital & Health Hub',
+    type: 'safe_verified',
+    category: 'Safety Commendation',
+    title: 'Bright Safe Corridor & Escort Staffed',
+    details: 'Campus safety escort team active at medical hub. Level boarding ramp verified and clear of obstructions.',
+    impact: 'Safety index verified at 9.9/10.',
+    timestamp: '1 hour ago',
+    upvotes: 27,
+    status: 'active',
+    severity: 'low'
+  }
+];
+
+export const INITIAL_FLEET_DATA: FleetVehicle[] = [
+  {
+    vehicleId: 'SH-108',
+    lineId: 'line_shuttle',
+    lineName: 'SafeCorridor Campus Night Shuttle',
+    driver: 'Officer M. Vasquez',
+    occupancyPct: 35,
+    crowdLevel: 'low',
+    wheelchairBaysOccupied: 1,
+    wheelchairBaysTotal: 3,
+    rampStatus: 'Operational - Auto Ramp',
+    nextStopId: 'stop_lib',
+    etaNextStopSec: 75,
+    speedKmh: 28,
+    lastPingTime: 'Just now',
+    emergencySosActive: false
+  },
+  {
+    vehicleId: 'MB-402',
+    lineId: 'line_metro',
+    lineName: 'Metro Blue Line (Car 402)',
+    driver: 'Cond. T. Reynolds',
+    occupancyPct: 88,
+    crowdLevel: 'high',
+    wheelchairBaysOccupied: 2,
+    wheelchairBaysTotal: 2,
+    rampStatus: 'Bridge Plate Verified',
+    nextStopId: 'stop_metro',
+    etaNextStopSec: 140,
+    speedKmh: 48,
+    lastPingTime: '2s ago',
+    emergencySosActive: false
+  },
+  {
+    vehicleId: 'CB-214',
+    lineId: 'line_bus4',
+    lineName: 'City Rapid Transit Line 4',
+    driver: 'Driver D. Kowalski',
+    occupancyPct: 62,
+    crowdLevel: 'moderate',
+    wheelchairBaysOccupied: 0,
+    wheelchairBaysTotal: 2,
+    rampStatus: 'Operational - Auto Ramp',
+    nextStopId: 'stop_arts',
+    etaNextStopSec: 210,
+    speedKmh: 22,
+    lastPingTime: '5s ago',
+    emergencySosActive: false
+  },
+  {
+    vehicleId: 'GR-301',
+    lineId: 'line_green_rail',
+    lineName: 'University Light Rail Green',
+    driver: 'Capt. E. Chen',
+    occupancyPct: 20,
+    crowdLevel: 'low',
+    wheelchairBaysOccupied: 1,
+    wheelchairBaysTotal: 4,
+    rampStatus: 'Operational - Auto Ramp',
+    nextStopId: 'stop_res',
+    etaNextStopSec: 95,
+    speedKmh: 35,
+    lastPingTime: 'Just now',
+    emergencySosActive: false
+  }
+];
+
