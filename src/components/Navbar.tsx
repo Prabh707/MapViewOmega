@@ -2,8 +2,8 @@ import React from 'react';
 import { UserPreferences } from '../types/transit';
 
 interface NavbarProps {
-  currentTab: 'home' | 'planner' | 'operator';
-  onSelectTab: (tab: 'home' | 'planner' | 'operator') => void;
+  currentTab: 'home' | 'planner' | 'operator' | 'insights';
+  onSelectTab: (tab: 'home' | 'planner' | 'operator' | 'insights') => void;
   preferences: UserPreferences;
   onUpdatePreferences: (updates: Partial<UserPreferences>) => void;
   onOpenPreferencesModal: () => void;
@@ -18,13 +18,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   onUpdatePreferences,
   onOpenPreferencesModal,
   onOpenReportModal,
-  activeReportCount = 0
+  activeReportCount = 0,
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onSelectTab('home')}>
             <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-600 shadow-lg shadow-emerald-500/20 text-white font-bold text-xl ring-2 ring-emerald-400/30">
@@ -32,17 +31,24 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-extrabold text-xl tracking-tight text-white">Access<span className="text-emerald-400">Ride</span></span>
+                <span className="font-extrabold text-xl tracking-tight text-white">
+                  Access<span className="text-emerald-400">Ride</span>
+                </span>
                 <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
                   v1.0 Ready
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 hidden sm:block">Safe & Accessible Transit Navigator</p>
+              <p className="text-[11px] text-slate-400 hidden sm:block">
+                Safe & Accessible Transit Navigator
+              </p>
             </div>
           </div>
 
           {/* Center Navigation Tabs */}
-          <nav className="flex items-center space-x-1 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80" aria-label="Main Navigation">
+          <nav
+            className="flex items-center space-x-1 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80"
+            aria-label="Main Navigation"
+          >
             <button
               id="navTabHome"
               onClick={() => onSelectTab('home')}
@@ -89,11 +95,24 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               )}
             </button>
+
+            <button
+              id="navTabInsights"
+              onClick={() => onSelectTab('insights')}
+              className={`flex items-center space-x-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 ${
+                currentTab === 'insights'
+                  ? 'bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white shadow-md shadow-purple-600/30 ring-1 ring-purple-400/40'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              <span>🔮</span>
+              <span className="hidden sm:inline">Predictive Insights</span>
+              <span className="sm:hidden">Insights</span>
+            </button>
           </nav>
 
           {/* Quick Accessibility Controls & Preferences Trigger */}
           <div className="flex items-center space-x-2 sm:space-x-2.5">
-            
             {/* Quick Report Button */}
             <button
               id="navQuickReportBtn"
@@ -105,7 +124,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="hidden md:inline">Report Issue</span>
             </button>
 
-            
             {/* Preferences Modal Button */}
             <button
               id="openPreferencesBtn"
@@ -129,7 +147,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <span>👁️</span>
-              <span className="hidden md:inline">{preferences.highContrast ? 'High Contrast: ON' : 'Contrast'}</span>
+              <span className="hidden md:inline">
+                {preferences.highContrast ? 'High Contrast: ON' : 'Contrast'}
+              </span>
             </button>
 
             {/* Voice Cues Toggle */}
@@ -144,7 +164,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <span>🔊</span>
-              <span className="hidden lg:inline">{preferences.voiceAnnouncements ? 'Voice: ON' : 'Voice'}</span>
+              <span className="hidden lg:inline">
+                {preferences.voiceAnnouncements ? 'Voice: ON' : 'Voice'}
+              </span>
             </button>
 
             {/* Text Scaling Controls */}
@@ -171,9 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 A++
               </button>
             </div>
-
           </div>
-
         </div>
       </div>
     </header>

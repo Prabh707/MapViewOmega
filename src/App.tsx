@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { UserPreferences, RouteCandidate, TransitStop, TransitLine, QuickPreset, AccessibilityProfile, ProfileId, CommunityReport, FleetVehicle } from './types/transit';
+import type {
+  UserPreferences,
+  RouteCandidate,
+  RouteSegment,
+  TransitStop,
+  TransitLine,
+  QuickPreset,
+  AccessibilityProfile,
+  ProfileId,
+  CommunityReport,
+  FleetVehicle,
+} from './types/transit';
 import { TransitService } from './services/transitService';
 import { RoutingEngine } from './services/routingEngine';
 import { SpeechService } from './services/speechService';
@@ -10,11 +21,14 @@ import { PreferenceModal } from './components/PreferenceModal';
 import { RouteDetailModal } from './components/RouteDetailModal';
 import { ReportModal } from './components/ReportModal';
 import { OperatorDashboard } from './components/OperatorDashboard';
+import { InsightsPanel } from './components/InsightsPanel';
 import { JourneyMode } from './components/JourneyMode';
 
 export const App: React.FC = () => {
   // Navigation
-  const [currentTab, setCurrentTab] = useState<'home' | 'planner' | 'operator' | 'journey'>('home');
+  const [currentTab, setCurrentTab] = useState<'home' | 'planner' | 'operator' | 'journey' | 'insights'>(
+    'home'
+  );
 
   // Accessibility & Safety Preferences
   const [preferences, setPreferences] = useState<UserPreferences>(() => {
@@ -42,7 +56,7 @@ export const App: React.FC = () => {
   const [profiles, setProfiles] = useState<AccessibilityProfile[]>([]);
   const [reports, setReports] = useState<CommunityReport[]>([]);
   const [fleet, setFleet] = useState<FleetVehicle[]>([]);
-  
+
   const [originId, setOriginId] = useState<string>('stop_gate');
   const [destId, setDestId] = useState<string>('stop_lib');
   const [routes, setRoutes] = useState<RouteCandidate[]>([]);
@@ -101,7 +115,9 @@ export const App: React.FC = () => {
     if (calculated.length > 0) {
       setSelectedRoute(calculated[0]); // Default to the top recommended route
       if (prefs.voiceAnnouncements) {
-        SpeechService.speak(`Calculated ${calculated.length} routes. Top recommendation is ${calculated[0].title}. Total travel time: ${calculated[0].totalDurationMin} minutes.`);
+        SpeechService.speak(
+          `Calculated ${calculated.length} routes. Top recommendation is ${calculated[0].title}. Total travel time: ${calculated[0].totalDurationMin} minutes.`
+        );
       }
     } else {
       setSelectedRoute(null);
@@ -127,7 +143,7 @@ export const App: React.FC = () => {
       ...prof.defaultPreferences,
       highContrast: preferences.highContrast,
       fontSize: preferences.fontSize,
-      voiceAnnouncements: preferences.voiceAnnouncements
+      voiceAnnouncements: preferences.voiceAnnouncements,
     };
     setPreferences(updated);
     if (preferences.voiceAnnouncements) {
@@ -173,10 +189,12 @@ export const App: React.FC = () => {
   };
 
   // Handle new report submission
-  const handleReportSubmitted = async (newReportData: Omit<CommunityReport, 'id' | 'timestamp' | 'upvotes' | 'status'>) => {
+  const handleReportSubmitted = async (
+    newReportData: Omit<CommunityReport, 'id' | 'timestamp' | 'upvotes' | 'status'>
+  ) => {
     const updatedReports = TransitService.addCommunityReport(newReportData);
     setReports([...updatedReports]);
-    
+
     // Refresh stops state from service to reflect barrier updates
     const refreshedStops = await TransitService.getStops();
     setStops([...refreshedStops]);
@@ -222,13 +240,13 @@ export const App: React.FC = () => {
       severity: 'critical',
       title: '🚨 MISSED CHECK-IN SOS: Passenger Alert (Alex Rivera)',
       details: `Automated 2-Tier Escalation: Passenger failed to respond to safety check-in warning along West Campus Safe Corridor near ${step.fromName}. Trusted emergency contact Sarah Jenkins (+1 555-234-5678) notified via SMS & Push. Immediate campus security escort dispatch requested.`,
-      impact: 'Cruiser #12 dispatched (Officer J. Miller). Monitored via Operator Command Desk.'
+      impact: 'Cruiser #12 dispatched (Officer J. Miller). Monitored via Operator Command Desk.',
     };
     const updated = TransitService.addCommunityReport(escalationReport);
     setReports([...updated]);
     setBroadcastBanner({
       title: '🚨 EMERGENCY ESCALATION ALERT',
-      message: `Automated safety escort cruiser dispatched to ${step.fromName} for passenger Alex Rivera.`
+      message: `Automated safety escort cruiser dispatched to ${step.fromName} for passenger Alex Rivera.`,
     });
   };
 
@@ -243,11 +261,10 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
-      
       {/* 1. Global Shell Navigation */}
       <Navbar
         currentTab={currentTab === 'journey' ? 'planner' : currentTab}
-        onSelectTab={(tab) => {
+        onSelectTab={tab => {
           if (currentTab === 'journey') {
             setActiveJourneyRoute(null);
           }
@@ -266,7 +283,9 @@ export const App: React.FC = () => {
           <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <span className="text-lg">📢</span>
-              <span><strong>{broadcastBanner.title}:</strong> {broadcastBanner.message}</span>
+              <span>
+                <strong>{broadcastBanner.title}:</strong> {broadcastBanner.message}
+              </span>
             </div>
             <button
               onClick={() => setBroadcastBanner(null)}
@@ -323,9 +342,11 @@ export const App: React.FC = () => {
             onUpdatePreferences={handleUpdatePreferences}
             onOpenPreferencesModal={() => setIsPrefModalOpen(true)}
             onOpenReportModal={() => handleOpenReport()}
-            onReportStop={(stopId) => handleOpenReport(stopId)}
+            onReportStop={stopId => handleOpenReport(stopId)}
             onStartJourney={handleStartJourney}
           />
+        ) : currentTab === 'insights' ? (
+          <InsightsPanel stops={stops} lines={lines} />
         ) : (
           <OperatorDashboard
             fleet={fleet}
@@ -346,7 +367,7 @@ export const App: React.FC = () => {
         isOpen={isPrefModalOpen}
         onClose={() => setIsPrefModalOpen(false)}
         preferences={preferences}
-        onSavePreferences={(newPrefs) => setPreferences(newPrefs)}
+        onSavePreferences={newPrefs => setPreferences(newPrefs)}
       />
 
       {/* 4. Community Barrier & Hazard Reporting Modal */}
@@ -367,7 +388,6 @@ export const App: React.FC = () => {
         onStartJourney={handleStartJourney}
       />
 
-
       {/* 6. Accessible Footer */}
       <footer className="bg-slate-900 border-t border-slate-800/80 py-6 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -379,8 +399,6 @@ export const App: React.FC = () => {
           <p>Prioritizing dignity, safe lit corridors, and 100% barrier-free transit for all passengers.</p>
         </div>
       </footer>
-
     </div>
   );
 };
-

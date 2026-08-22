@@ -1,73 +1,48 @@
-# AccessRide — Modular Feature Exchange Directory
+# AccessRide — Features Reference
 
-This directory contains every major AccessRide feature as a self-contained, isolated module. Each folder includes the component source code, types, and a dedicated `README.md` explaining how to integrate or repurpose it independently.
+This Folder is **not part of the build**. The real app only ever compiles code from `src/`.
 
----
+Think of this folder as a library of "kits" — each subfolder pulls together the handful of files
+that make one feature work, plus a README that explains that feature in plain English, from what
+it does down to how the code actually does it. If you ever want to lift just one piece of
+AccessRide (say, the route-scoring engine) into a different project, you can grab a single folder
+here instead of hunting through all of `src/`.
 
-## 📦 Feature Modules
+Because each folder is meant to stand on its own, some files are duplicated across folders
+(`types/transit.ts` shows up in almost every one, for example). That's intentional — it's a
+trade-off of a little repetition for each folder being self-contained.
 
-| # | Folder | Feature | Key Files |
-|:--|:--|:--|:--|
-| 1 | [`1_accessible_routing_engine/`](./1_accessible_routing_engine/) | Accessibility-first multi-modal routing algorithm | `RoutingEngine.ts`, `RoutePlanner.tsx`, `RouteCard.tsx`, `RouteDetailModal.tsx`, `transitData.ts`, `types.ts` |
-| 2 | [`2_journey_navigation_safety_checkin/`](./2_journey_navigation_safety_checkin/) | Live navigation + 4-stage missed check-in escalation | `JourneyMode.tsx`, `SpeechService.ts` |
-| 3 | [`3_crowdsourced_barrier_reporting/`](./3_crowdsourced_barrier_reporting/) | Passenger barrier & hazard reporting modal | `ReportModal.tsx` |
-| 4 | [`4_operator_command_dashboard/`](./4_operator_command_dashboard/) | Fleet telemetry, incident triage & broadcast center | `OperatorDashboard.tsx` |
-| 5 | [`5_interactive_accessibility_map/`](./5_interactive_accessibility_map/) | Leaflet map with step-free overlays & route polylines | `MapView.tsx` |
-| 6 | [`6_accessibility_profiles_preferences/`](./6_accessibility_profiles_preferences/) | 6 mobility profiles + granular preference controls | `PreferenceModal.tsx`, `HomeScreen.tsx` |
+## The six features
 
----
+| # | Folder | What it covers | Difficulty to understand |
+|---|---|---|---|
+| 1 | [`1-accessibility-profiles/`](./1-accessibility-profiles/README.md) | The 6 rider profiles (wheelchair, elderly, vision/hearing, night safety, quiet/sensory, standard) and the preferences system they configure | Beginner |
+| 2 | [`2-route-engine/`](./2-route-engine/README.md) | Generates candidate routes between two stops and scores them on accessibility, safety, comfort, and speed | Intermediate |
+| 3 | [`3-journey-mode/`](./3-journey-mode/README.md) | Turn-by-turn navigation with voice announcements and a 4-stage missed-check-in emergency escalation | Beginner–Intermediate |
+| 4 | [`4-crowdsourced-reporting/`](./4-crowdsourced-reporting/README.md) | Riders flagging broken elevators, dim lighting, crowding, delays, and safety concerns | Beginner |
+| 5 | [`5-operator-dashboard/`](./5-operator-dashboard/README.md) | The transit-operator side: fleet telemetry, incident triage queue, system broadcasts | Beginner–Intermediate |
+| 6 | [`6-predictive-insights/`](./6-predictive-insights/README.md) | The two machine-learning models: a crowd-level forecaster and a safety-score estimator | Intermediate (has the ML math) |
 
-## 🗂️ Shared / Reusable Files
+## Suggested reading order if you're new to the codebase
 
-These files are shared across all feature modules:
+1. **Accessibility Profiles** first — almost everything else reads from `UserPreferences`, so
+   understanding what that object contains makes every other folder click faster.
+2. **Route Engine** next — this is the actual "product," the thing the app is for.
+3. **Journey Mode**, **Crowdsourced Reporting**, and **Operator Dashboard** in any order — they're
+   independent of each other.
+4. **Predictive Insights** last — it's the most mathematical piece, and it's easier to appreciate
+   once you've seen what data (stops, lines, reports) already exists for it to learn from.
 
-| File | Purpose |
-|:--|:--|
-| [`shared_types.ts`](./shared_types.ts) | All TypeScript interfaces & type definitions |
-| [`shared_TransitService.ts`](./shared_TransitService.ts) | In-memory mock data store & CRUD operations |
-| [`shared_SpeechService.ts`](./shared_SpeechService.ts) | Web Speech API wrapper for accessible voice announcements |
-| [`shared_styles.css`](./shared_styles.css) | Complete design system CSS (dark mode, animations, WCAG AAA tokens) |
-| [`App.tsx`](./App.tsx) | Root application wiring all features together |
+## How each feature folder is organized
 
----
-
-## 🔄 Safety Escalation Data Flow
+Every folder mirrors the shape of `src/` but only includes what that feature needs:
 
 ```
-JourneyMode (Feature 2)
-    ↓ onTriggerEmergencyEscalation(route, step)
-App.tsx
-    ↓ TransitService.addCommunityReport({ type: 'sos_alert', severity: 'critical' })
-    ↓ setBroadcastBanner(...)
-OperatorDashboard (Feature 4)
-    ↓ Renders SOS ticket at top of triage queue
-    ↓ 🚓 "Dispatch Security & Intercept" button → resolves ticket
+N-feature-name/
+├── README.md          Detailed, beginner-friendly explanation of this feature
+├── components/         The screen(s)/modal(s) that make up its UI, if any
+├── services/           Business logic it depends on, if any
+├── ml/                 Machine-learning code, if any (only in feature 6)
+├── data/                Mock data it reads from, if any
+└── types/               Shared TypeScript types it uses
 ```
-
----
-
-## 🚀 Quick Start (Standalone HTML — No Build Required)
-
-The app runs as a pure client-side React 18 app via Babel Standalone — no Node.js needed:
-
-```bash
-# Start a local HTTP server in the project root
-python -m http.server 8080
-
-# Open in browser
-http://localhost:8080/
-```
-
----
-
-## 🎯 Demo Scenario (Hackathon Walk-through)
-
-1. Open AccessRide → Select **Wheelchair + Avoid Stairs + Prefer Safer Route**
-2. Enter **Main Gate → Central Library** → Compare 4 routes
-3. Understand why SafeCorridor Shuttle is recommended (18 stairs vs. 0)
-4. Click **▶ Start Accessible Journey**
-5. In Journey Mode → click **⚡ Demo: Expire in 3s**
-6. Watch the 4-stage safety escalation: Warning → SMS Contact → Security Dispatch
-7. Switch to **🏢 Operator Command** tab → see live SOS ticket in triage queue
-8. Click **🚓 Dispatch Security & Intercept** → ticket resolved
-9. Back in Journey Mode → click **✓ I Have Arrived Safely**

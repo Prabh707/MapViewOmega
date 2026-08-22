@@ -1,5 +1,12 @@
 import React from 'react';
-import { AccessibilityProfile, TransitStop, QuickPreset, UserPreferences, ProfileId, CommunityReport } from '../types/transit';
+import {
+  AccessibilityProfile,
+  TransitStop,
+  QuickPreset,
+  UserPreferences,
+  ProfileId,
+  CommunityReport,
+} from '../types/transit';
 
 interface HomeScreenProps {
   profiles: AccessibilityProfile[];
@@ -26,20 +33,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onStartPlanning,
   onOpenPreferencesModal,
   onOpenReportModal,
-  onUpvoteReport
+  onUpvoteReport,
 }) => {
-
   const currentProfile = profiles.find(p => p.id === preferences.profileId) || profiles[0];
+
+  // Data (profiles, stops, etc.) loads asynchronously in App.tsx and is empty
+  // on the very first render, so bail out early to avoid crashing on
+  // currentProfile being undefined.
+  if (!currentProfile) {
+    return (
+      <div className="flex items-center justify-center py-24 text-slate-400 text-sm animate-fadeIn">
+        Loading accessibility profiles…
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-12 pb-16 animate-fadeIn">
-      
       {/* 1. Hero Section */}
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 p-8 sm:p-12 shadow-2xl">
         {/* Glow background decorations */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        
+
         <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-6">
             <span className="animate-pulse">●</span>
@@ -47,12 +63,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
 
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-4">
-            Navigate your city with <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">confidence, safety & zero barriers</span>.
+            Navigate your city with{' '}
+            <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-blue-400 bg-clip-text text-transparent">
+              confidence, safety & zero barriers
+            </span>
+            .
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 mb-8 leading-relaxed">
-            AccessRide prioritizes <strong>your accessibility and safety needs</strong> over pure speed. 
-            Discover verified 100% step-free pathways, avoid broken elevators and stairs, and travel along illuminated corridors with emergency SOS protection.
+            AccessRide prioritizes <strong>your accessibility and safety needs</strong> over pure speed.
+            Discover verified 100% step-free pathways, avoid broken elevators and stairs, and travel along
+            illuminated corridors with emergency SOS protection.
           </p>
 
           {/* Call to action buttons */}
@@ -84,12 +105,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
-
       {/* 2. Interactive Profile Selector Card */}
       <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Step 1: Choose Your Needs</span>
+            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              Step 1: Choose Your Needs
+            </span>
             <h2 className="text-2xl font-black text-white">How would you like to travel today?</h2>
           </div>
           <button
@@ -102,7 +124,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Profile Chips Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {profiles.map((p) => {
+          {profiles.map(p => {
             const isSelected = preferences.profileId === p.id;
             return (
               <button
@@ -115,7 +137,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 }`}
               >
                 <span className="text-3xl">{p.icon}</span>
-                <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-emerald-300' : 'text-slate-200'}`}>
+                <span
+                  className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-emerald-300' : 'text-slate-200'}`}
+                >
                   {p.name}
                 </span>
                 <span className="text-[10px] text-slate-400 line-clamp-1">{p.tagline}</span>
@@ -150,12 +174,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* 3. Popular Route Presets */}
       <section>
         <div className="mb-4">
-          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Quick Demos & Popular Routes</span>
+          <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+            Quick Demos & Popular Routes
+          </span>
           <h3 className="text-xl font-bold text-white">Explore Common Accessible Routes</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {presets.map((preset) => (
+          {presets.map(preset => (
             <div
               key={preset.id}
               onClick={() => onSelectPreset(preset)}
@@ -187,7 +213,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
           <h4 className="text-base font-bold text-white mb-2">100% Step-Free Validation</h4>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Guarantees routes with electric low-floor vehicle ramps, ADA curb ramps, and verified elevator access to eliminate unexpected physical barriers.
+            Guarantees routes with electric low-floor vehicle ramps, ADA curb ramps, and verified elevator
+            access to eliminate unexpected physical barriers.
           </p>
         </div>
 
@@ -197,7 +224,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
           <h4 className="text-base font-bold text-white mb-2">Safe Lit Corridors</h4>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Routes scored by lighting intensity (up to 10/10), active CCTV coverage, 24/7 Blue-Light SOS kiosks, and security escort services.
+            Routes scored by lighting intensity (up to 10/10), active CCTV coverage, 24/7 Blue-Light SOS
+            kiosks, and security escort services.
           </p>
         </div>
 
@@ -207,7 +235,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
           <h4 className="text-base font-bold text-white mb-2">Transparent Route AI</h4>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Plain-English explanations for every route choice. Understand exactly why a route was recommended and what tradeoffs it avoids.
+            Plain-English explanations for every route choice. Understand exactly why a route was recommended
+            and what tradeoffs it avoids.
           </p>
         </div>
 
@@ -217,7 +246,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
           <h4 className="text-base font-bold text-white mb-2">Barrier Hazard Avoidance</h4>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Automatically reroutes around out-of-service elevators, steep stair-only concourses, cobblestone vibration zones, and high-rush crowds.
+            Automatically reroutes around out-of-service elevators, steep stair-only concourses, cobblestone
+            vibration zones, and high-rush crowds.
           </p>
         </div>
       </section>
@@ -227,13 +257,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Crowdsource Intelligence</span>
+              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+                Crowdsource Intelligence
+              </span>
               <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800">
                 Live Field Feed
               </span>
             </div>
-            <h3 className="text-xl font-bold text-white mt-1">Live Passenger Barrier & Transit Pulse Alerts</h3>
-            <p className="text-xs text-slate-400">Real-time reports from fellow passengers. Directly fed into dispatch & routing.</p>
+            <h3 className="text-xl font-bold text-white mt-1">
+              Live Passenger Barrier & Transit Pulse Alerts
+            </h3>
+            <p className="text-xs text-slate-400">
+              Real-time reports from fellow passengers. Directly fed into dispatch & routing.
+            </p>
           </div>
 
           <button
@@ -247,7 +283,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Reports Feed Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reports.slice(0, 6).map((r) => {
+          {reports.slice(0, 6).map(r => {
             const isBarrier = r.category === 'Accessibility Barrier';
             const isCrowd = r.category === 'Crowding';
             const isDelay = r.category === 'Transit Delay';
@@ -260,25 +296,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   isResolved
                     ? 'bg-slate-950/60 border-slate-800/80 opacity-70'
                     : isBarrier
-                    ? 'bg-red-950/20 border-red-900/50 hover:border-red-700/80'
-                    : isCrowd
-                    ? 'bg-purple-950/20 border-purple-900/50 hover:border-purple-700/80'
-                    : isDelay
-                    ? 'bg-amber-950/20 border-amber-900/50 hover:border-amber-700/80'
-                    : 'bg-emerald-950/20 border-emerald-900/50 hover:border-emerald-700/80'
+                      ? 'bg-red-950/20 border-red-900/50 hover:border-red-700/80'
+                      : isCrowd
+                        ? 'bg-purple-950/20 border-purple-900/50 hover:border-purple-700/80'
+                        : isDelay
+                          ? 'bg-amber-950/20 border-amber-900/50 hover:border-amber-700/80'
+                          : 'bg-emerald-950/20 border-emerald-900/50 hover:border-emerald-700/80'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between text-xs mb-2">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
-                      isBarrier
-                        ? 'bg-red-950/80 text-red-300 border-red-800'
-                        : isCrowd
-                        ? 'bg-purple-950/80 text-purple-300 border-purple-800'
-                        : isDelay
-                        ? 'bg-amber-950/80 text-amber-300 border-amber-800'
-                        : 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
-                    }`}>
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                        isBarrier
+                          ? 'bg-red-950/80 text-red-300 border-red-800'
+                          : isCrowd
+                            ? 'bg-purple-950/80 text-purple-300 border-purple-800'
+                            : isDelay
+                              ? 'bg-amber-950/80 text-amber-300 border-amber-800'
+                              : 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+                      }`}
+                    >
                       {r.category}
                     </span>
                     <span className="text-[11px] text-slate-400 font-mono">⏱️ {r.timestamp}</span>
@@ -309,10 +347,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       {/* 6. Live Transit Hubs Status Grid */}
       <section className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
-
         <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
           <div>
-            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Network Transparency</span>
+            <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+              Network Transparency
+            </span>
             <h3 className="text-xl font-bold text-white">Live Station & Transit Hubs Status</h3>
           </div>
           <div className="flex items-center space-x-3 text-xs text-slate-400">
@@ -328,14 +367,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {stops.map((stop) => (
+          {stops.map(stop => (
             <div
               key={stop.id}
               className="p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 hover:border-slate-700 transition"
             >
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{stop.zone}</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                    {stop.zone}
+                  </span>
                   <h4 className="text-sm font-bold text-white">{stop.name}</h4>
                 </div>
                 <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
@@ -345,9 +386,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
               <div className="grid grid-cols-2 gap-2 my-3 text-[11px]">
                 {/* Step free */}
-                <div className={`px-2 py-1 rounded flex items-center space-x-1.5 font-semibold ${
-                  stop.stepFree ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800/50' : 'bg-red-950/70 text-red-300 border border-red-800/50'
-                }`}>
+                <div
+                  className={`px-2 py-1 rounded flex items-center space-x-1.5 font-semibold ${
+                    stop.stepFree
+                      ? 'bg-emerald-950/70 text-emerald-300 border border-emerald-800/50'
+                      : 'bg-red-950/70 text-red-300 border border-red-800/50'
+                  }`}
+                >
                   <span>{stop.stepFree ? '✓' : '⚠️'}</span>
                   <span>{stop.stepFree ? 'Step-Free' : 'Has Stairs'}</span>
                 </div>
@@ -359,13 +404,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </div>
 
                 {/* Elevator */}
-                <div className={`px-2 py-1 rounded flex items-center space-x-1.5 font-medium ${
-                  stop.elevatorStatus === 'operational'
-                    ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-900'
-                    : stop.elevatorStatus === 'broken'
-                    ? 'bg-red-950/70 text-red-300 border border-red-800'
-                    : 'bg-slate-800 text-slate-400 border border-slate-700'
-                }`}>
+                <div
+                  className={`px-2 py-1 rounded flex items-center space-x-1.5 font-medium ${
+                    stop.elevatorStatus === 'operational'
+                      ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-900'
+                      : stop.elevatorStatus === 'broken'
+                        ? 'bg-red-950/70 text-red-300 border border-red-800'
+                        : 'bg-slate-800 text-slate-400 border border-slate-700'
+                  }`}
+                >
                   <span>🛗</span>
                   <span>Elev: {stop.elevatorStatus}</span>
                 </div>
@@ -382,7 +429,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           ))}
         </div>
       </section>
-
     </div>
   );
 };

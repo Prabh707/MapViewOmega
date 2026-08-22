@@ -1,0 +1,203 @@
+/**
+ * AccessRide - Custom Styles & Accessibility Overrides
+ * WCAG AAA High Contrast & Font Scaling System
+ */
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Leaflet Custom Marker Pins */
+.custom-leaflet-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-marker-pin {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  border: 2px solid #ffffff;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.custom-marker-pin:hover {
+  transform: scale(1.18);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+  z-index: 9999;
+}
+
+.custom-marker-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Leaflet Popup Styling */
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3) !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-tip {
+  background: #ffffff !important;
+}
+
+/* FONT SCALING CLASSES FOR LOW VISION */
+.font-scale-large {
+  font-size: 112% !important;
+}
+.font-scale-large h1 {
+  font-size: 2.75rem !important;
+}
+.font-scale-large h2 {
+  font-size: 2rem !important;
+}
+.font-scale-large h3 {
+  font-size: 1.5rem !important;
+}
+
+.font-scale-xlarge {
+  font-size: 125% !important;
+}
+.font-scale-xlarge h1 {
+  font-size: 3.25rem !important;
+}
+.font-scale-xlarge h2 {
+  font-size: 2.25rem !important;
+}
+.font-scale-xlarge h3 {
+  font-size: 1.75rem !important;
+}
+
+/* WCAG AAA HIGH CONTRAST MODE */
+.high-contrast {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast body,
+.high-contrast #root {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.high-contrast header,
+.high-contrast nav,
+.high-contrast footer,
+.high-contrast section,
+.high-contrast div[role='dialog'] > div,
+.high-contrast .bg-slate-900,
+.high-contrast .bg-slate-950,
+.high-contrast .bg-slate-900\/80,
+.high-contrast .bg-slate-900\/70,
+.high-contrast .bg-slate-900\/50,
+.high-contrast .bg-slate-950\/80,
+.high-contrast .bg-slate-950\/70,
+.high-contrast .bg-slate-950\/60,
+.high-contrast .bg-slate-800,
+.high-contrast .bg-slate-800\/60,
+.high-contrast .bg-slate-800\/50,
+.high-contrast .bg-slate-800\/40 {
+  background-color: #000000 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.high-contrast .text-slate-400,
+.high-contrast .text-slate-300,
+.high-contrast .text-slate-200 {
+  color: #ffffff !important;
+}
+
+.high-contrast .text-emerald-400,
+.high-contrast .text-emerald-300 {
+  color: #ffff00 !important; /* High-contrast yellow */
+}
+
+.high-contrast .text-blue-400,
+.high-contrast .text-blue-300 {
+  color: #00ffff !important; /* High-contrast cyan */
+}
+
+.high-contrast .text-red-400,
+.high-contrast .text-red-300 {
+  color: #ff3333 !important;
+}
+
+.high-contrast .bg-emerald-600,
+.high-contrast .bg-emerald-500 {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  font-weight: 900 !important;
+  border: 2px solid #ffffff !important;
+}
+
+.high-contrast .bg-blue-600 {
+  background-color: #00ffff !important;
+  color: #000000 !important;
+  font-weight: 900 !important;
+}
+
+.high-contrast button,
+.high-contrast select,
+.high-contrast input {
+  border-width: 2px !important;
+  border-color: #ffffff !important;
+}
+
+.high-contrast .custom-marker-pin {
+  border: 3px solid #ffff00 !important;
+}
